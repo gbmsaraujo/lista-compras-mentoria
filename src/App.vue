@@ -1,0 +1,105 @@
+<template lang="">
+  <div>
+    <h1>
+      Lista de Compras
+    </h1>
+
+    <p>Minha Lista</p>
+
+
+    <div>
+      <label for="inserir">Insira um Item na Lista: </label>
+      <input type="text" id="inserir" v-model="itemToAdd">
+    </div>
+
+    <button @click="addItemToList">Adicionar</button>
+
+    <ul class="itens">
+      <li v-for="(item, index) in listaCompras" :key="index">
+        {{item}}
+        <span class="edit" @click="setToEdit">✏️</span>
+        <span class="remove" @click="removeValue(index)">🗑️</span>
+        <div v-show="isEdit">
+          <input type="text" v-model="itemEdited"> 
+          <span class="check" @click="editValue(index)">✅</span></div>
+      </li>
+
+    </ul>
+
+
+
+    <p v-show="listaCompras.length === 0"> Nenhum item na lista! </p>
+
+    <!-- <p v-if="numero < 4"> Numero é menor que 4</p>
+    <p v-else-if="numero>4"> Numero Maior que 4</p>
+    <p v-else>Numero Igual a 4</p> -->
+
+    <!-- <p v-show="numero<4">Essa tag será mostrada</p> -->
+
+
+
+  </div>
+</template>
+
+<script setup>
+import { ref } from "vue";
+// Add item ok
+// Primeira letra da lista seja em Maiuscula - ok
+// Evitar de add item Repetido 
+// Remover item da lista de compras ok
+// Editar item da lista ok
+// Mostrar uma mensagem Lista vazia quando ela não tiver itens - ok
+
+const name = ref("Gabriel");
+
+const capitalizar = (texto) => {
+  return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+};
+
+const itemToAdd = ref("");
+const isEdit = ref(false);
+
+const itemEdited = ref("");
+
+const listaCompras = ref([]);
+
+const addItemToList = () => {
+  if (!itemToAdd.value) {
+    return;
+  }
+
+  listaCompras.value.push(capitalizar(itemToAdd.value));
+  itemToAdd.value = "";
+};
+
+const setToEdit = () => {
+  isEdit.value = !isEdit.value;
+};
+
+const editValue = (selectedIndex) => {
+  listaCompras.value.splice(selectedIndex, 1, capitalizar(itemEdited.value))
+  isEdit.value = false
+  itemEdited.value = ""
+};
+
+const removeValue = (selectedIndex) => {
+  const filterList = listaCompras.value.filter((value, index) => selectedIndex !== index)
+  listaCompras.value = filterList
+}
+</script>
+
+<style>
+.edit {
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.remove {
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+.check {
+  cursor: pointer;
+}
+</style>
