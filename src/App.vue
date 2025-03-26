@@ -9,7 +9,7 @@
 
     <div>
       <label for="inserir">Insira um Item na Lista: </label>
-      <input type="text" id="inserir" v-model="itemToAdd">
+      <input type="text" id="inserir" v-model="itemToAdd" @keyup.enter="addItemToList">
     </div>
 
     <button @click="addItemToList">Adicionar</button>
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 // Add item ok
 // Primeira letra da lista seja em Maiuscula - ok
 // Evitar de add item Repetido 
@@ -58,18 +58,34 @@ const capitalizar = (texto) => {
 
 const itemToAdd = ref("");
 const isEdit = ref(false);
-
 const itemEdited = ref("");
-
 const listaCompras = ref([]);
+
+onMounted(() => {
+  const savedList = localStorage.getItem("listaCompras");
+  if (savedList) {
+    listaCompras.value = JSON.parse(savedList);
+  }
+});
+
+watch(listaCompras, (newValue) => {
+  localStorage.setItem("listaCompras", JSON.stringify(newValue));
+}, { deep: true });
 
 const addItemToList = () => {
   if (!itemToAdd.value) {
     return;
   }
 
-  listaCompras.value.push(capitalizar(itemToAdd.value));
-  itemToAdd.value = "";
+  const newItem = capitalizar(itemToAdd.value);
+  
+  if(!listaCompras.value.includes(newItem)) {
+    listaCompras.value.push(newItem);
+    itemToAdd.value = "";
+  } else {
+    console.log(listaCompras.value)
+    alert("Este item já está na lista!");
+  }
 };
 
 const setToEdit = () => {
