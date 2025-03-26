@@ -17,11 +17,11 @@
     <ul class="itens">
       <li v-for="(item, index) in listaCompras" :key="index">
         {{item}}
-        <span class="edit" @click="setToEdit">✏️</span>
+        <span class="edit" @click="setToEdit(index)">✏️</span>
         <span class="remove" @click="removeValue(index)">🗑️</span>
-        <div v-show="isEdit">
+        <div  v-show="indexToEdit===index">
           <input type="text" v-model="itemEdited"> 
-          <span class="check" @click="editValue(index)">✅</span></div>
+          <span class="check" @click="editValue(index)" >✅</span></div>
       </li>
 
     </ul>
@@ -57,7 +57,7 @@ const capitalizar = (texto) => {
 };
 
 const itemToAdd = ref("");
-const isEdit = ref(false);
+const indexToEdit = ref("")
 const itemEdited = ref("");
 const listaCompras = ref([]);
 
@@ -78,8 +78,8 @@ const addItemToList = () => {
   }
 
   const newItem = capitalizar(itemToAdd.value);
-  
-  if(!listaCompras.value.includes(newItem)) {
+
+  if (!listaCompras.value.includes(newItem)) {
     listaCompras.value.push(newItem);
     itemToAdd.value = "";
   } else {
@@ -88,8 +88,8 @@ const addItemToList = () => {
   }
 };
 
-const setToEdit = () => {
-  isEdit.value = !isEdit.value;
+const setToEdit = (indexItem) => {
+  indexToEdit.value = indexItem
 };
 
 const editValue = (selectedIndex) => {
